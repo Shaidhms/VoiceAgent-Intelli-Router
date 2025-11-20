@@ -28,8 +28,6 @@ It also includes:
 ---
 ## Demo 
 
-https://youtu.be/D_hTXDmgT3w?si=705__g_Bzzz_1w5b
-
 [![Watch the video](https://img.youtube.com/vi/D_hTXDmgT3w/0.jpg)](https://youtube.com/watch?v=D_hTXDmgT3w)
 
 
