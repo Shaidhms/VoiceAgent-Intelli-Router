@@ -268,9 +268,12 @@ Feel free to use and extend.
 
 ## 👤 Author
 
-**Shaid**
-GenAI Architect | Voice Agent Builder
-🔗 LinkedIn: *https://www.linkedin.com/in/muhibbuddin-shaid-hakkeem-26a06921/*
-📧 Email: *ai360withshaid@gmail.com*
-Youtube: *@ai360_with_shaid*
+| Field     | Details |
+|-----------|---------|
+| **Name**  | Shaid |
+| **Role**  | GenAI Architect • Voice Agent Builder |
+| **LinkedIn** | [muhibbuddin-shaid-hakkeem](https://www.linkedin.com/in/muhibbuddin-shaid-hakkeem-26a06921/) |
+| **Email** | ai360withshaid@gmail.com |
+| **YouTube** | @ai360_with_shaid |
+
 
