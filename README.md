@@ -274,6 +274,6 @@ Feel free to use and extend.
 | **Role**  | GenAI Architect • Voice Agent Builder |
 | **LinkedIn** | [muhibbuddin-shaid-hakkeem](https://www.linkedin.com/in/muhibbuddin-shaid-hakkeem-26a06921/) |
 | **Email** | ai360withshaid@gmail.com |
-| **YouTube** | @ai360_with_shaid |
+| **YouTube** | [@ai360_with_shaid](https://www.youtube.com/channel/UCcuj-wx3PJTqPOVf-Y-W3BA) |
 
 
