@@ -1,4 +1,4 @@
-# <img src="https://img.icons8.com/color/48/voice-recognition.png" width="32"/> **IntelliCall Router – AI Voice Agent**
+# **IntelliCall Router – AI Voice Agent**
 
 ### Built with **Retell AI + n8n + MCP + Slack + Gmail**
 
@@ -267,4 +267,5 @@ Feel free to use and extend.
 **Shaid**
 GenAI Architect | Voice Agent Builder
 🔗 LinkedIn: *https://www.linkedin.com/in/muhibbuddin-shaid-hakkeem-26a06921/*
+
 📧 Email: *ai360_with_shaid@gmail.com*
