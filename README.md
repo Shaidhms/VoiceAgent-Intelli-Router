@@ -271,5 +271,6 @@ Feel free to use and extend.
 **Shaid**
 GenAI Architect | Voice Agent Builder
 🔗 LinkedIn: *https://www.linkedin.com/in/muhibbuddin-shaid-hakkeem-26a06921/*
+📧 Email: *ai360withshaid@gmail.com*
+Youtube: *@ai360_with_shaid*
 
-📧 Email: *ai360_with_shaid@gmail.com*
