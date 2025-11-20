@@ -1,0 +1,114 @@
+{
+  "name": "voiceagent_mcp copy",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "83b5a474-f967-4605-b395-55b9d7fdb2cf"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 2,
+      "position": [
+        -176,
+        -192
+      ],
+      "id": "2ffdcf1b-6961-4032-8e54-c2d017376b8f",
+      "name": "MCP Server Trigger",
+      "webhookId": "83b5a474-f967-4605-b395-55b9d7fdb2cf",
+      "executeOnce": false,
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', ``, 'string') }}",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {
+          "appendAttribution": false,
+          "ccList": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('CC', ``, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        -176,
+        32
+      ],
+      "id": "62b19bc4-1139-4d25-b579-e6deb409d072",
+      "name": "Send a message in Gmail",
+      "webhookId": "f6a1d54c-f9eb-4b9b-9a5f-39f57e44a460",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "yQluHrcpRLgnoytZ",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C09PZUN4SH1",
+          "mode": "list",
+          "cachedResultName": "issue-tracker-voiceagent"
+        },
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message_Text', ``, 'string') }}",
+        "otherOptions": {
+          "includeLinkToWorkflow": false,
+          "mrkdwn": false
+        }
+      },
+      "type": "n8n-nodes-base.slackTool",
+      "typeVersion": 2.3,
+      "position": [
+        32,
+        32
+      ],
+      "id": "82f4635a-b76f-48a7-aa82-d9834748b1d1",
+      "name": "Send a message in Slack",
+      "webhookId": "f4b21537-abad-4949-8c94-8bf51cf7081b",
+      "credentials": {
+        "slackApi": {
+          "id": "3K3oo8AGkjWEpqCS",
+          "name": "Slack account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Send a message in Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message in Slack": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "b370b0e1-dcf1-4658-aa26-2fcce0ed7882",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "47c45f0a64eb51385bfea6c7c216101a546e4a99d1e2b0a0d7863ce541f1a14e"
+  },
+  "id": "lXSrCUL0Soj0L9yH",
+  "tags": []
+}

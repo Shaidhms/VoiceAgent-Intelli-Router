@@ -1,0 +1,259 @@
+{
+  "name": "voiceagent_main_flow copy",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "0fbc73d0-ef3f-4dae-9203-f802eef8b658",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -432,
+        -128
+      ],
+      "id": "2416c072-8a23-4a1b-a71d-bda7dc24858b",
+      "name": "Webhook",
+      "webhookId": "0fbc73d0-ef3f-4dae-9203-f802eef8b658"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "90414266-f359-4990-a019-5bd1b1f480c2",
+              "leftValue": "={{ $json.body.event }}",
+              "rightValue": "=call_analyzed",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -208,
+        -128
+      ],
+      "id": "b094891e-6099-405a-a10a-307188b4aa01",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={\n  \"routing_table\": {\n    \"billing\": { \n      \"team_name\": \"Billing Team\", \n      \"email\": \"billing-team@company.com\", \n      \"cc\": \"ops-routing@company.com\" \n    },\n    \"technical\": { \n      \"team_name\": \"IT Support\", \n      \"email\": \"tech-support@company.com\", \n      \"cc\": \"ops-routing@company.com\" \n    },\n    \"sales\": { \n      \"team_name\": \"Sales\", \n      \"email\": \"sales-team@company.com\", \n      \"cc\": \"ops-routing@company.com\" \n    },\n    \"account\": { \n      \"team_name\": \"Account Support\", \n      \"email\": \"account-support@company.com\", \n      \"cc\": \"ops-routing@company.com\" \n    },\n    \"other\": { \n      \"team_name\": \"General Support\", \n      \"email\": \"ops-routing@company.com\" \n    }\n  },\n  \"raw_reference_id\": \"call_{{ $json.call_id || 'unknown' }}\",\n  \"transcript\": {{ $json.body.call.transcript }},\n  \"call_analysis\": {{ $json.body.call.call_analysis.call_summary }}\n}\n",
+        "options": {
+          "systemMessage": "=You are “Voicemail Router.”\nYour job is to read  {{ $json.body.call.transcript }} and {{ $json.body.call.call_analysis.call_summary }} extract the issue intent and key details, map it to the correct team using a routing table, then call the MCP tool send_email with well-formed arguments.\n\nWhat you MUST do\n\nParse the JSON. Prefer the explicit summary in call_analysis.call_summary if present. Fall back to transcript.\n\nExtract:\n\nintent (one of: billing, technical, sales, account, other)\n\ntitle (short problem title)\n\ndescription (2–5 lines, crisp summary)\n\ncustomer_phone : {{ $json.body.call.from_number }}\n\nurgency (low, normal, or high; mark high if user is blocked from work)\n\nstarted_at if stated\n\nRoute using the routing table (provided in the user prompt as routing_table). If no match, send to other.\n\n\nIMPORTANT Call the MCP tool send_email and slack message tool \n\nargs:\n\n{\n    \"intent\": \"<string>\",\n    \"urgency\": \"<string>\",\n    \"customer_phone\": \"<string>\",\n    \"source\": \"voice_agent\",\n    \"raw_reference_id\": \"<string>\"\n  }\n}\n\n\nBe deterministic. If information is missing, say “Not provided” rather than guessing.\n\nOutput ONLY the MCP tool call. No extra prose.\n\nStyle\n\nKeep subject lines tight: [<INTENT|TEAM>] <title>\n\nBody format:\n\n```html\n<!-- Voicemail Router — Email Body (HTML) -->\n<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#f6f7f9;padding:24px 0;\">\n  <tr>\n    <td align=\"center\">\n      <table role=\"presentation\" width=\"640\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#ffffff;border:1px solid #e6e8eb;border-radius:8px;font-family:Arial,Helvetica,sans-serif;color:#0f172a;\">\n        <!-- Header -->\n        <tr>\n          <td style=\"padding:20px 24px;border-bottom:1px solid #e6e8eb;background:#0ea5e9;color:#ffffff;border-radius:8px 8px 0 0;\">\n            <div style=\"font-size:14px;letter-spacing:.5px;text-transform:uppercase;opacity:.95;\">Voicemail Router</div>\n            <div style=\"font-size:20px;font-weight:700;margin-top:4px;\">{{title}}</div>\n          </td>\n        </tr>\n\n        <!-- Meta grid -->\n        <tr>\n          <td style=\"padding:16px 24px;\">\n            <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"border-collapse:collapse;\">\n              <tr>\n                <td style=\"width:25%;padding:8px 0;color:#64748b;font-size:12px;text-transform:uppercase;\">Team</td>\n                <td style=\"padding:8px 0;font-size:14px;font-weight:600;\">{{ team_name }}</td>\n              </tr>\n              <tr>\n                <td style=\"padding:8px 0;color:#64748b;font-size:12px;text-transform:uppercase;\">Intent</td>\n                <td style=\"padding:8px 0;font-size:14px;\">{{ intent }}</td>\n              </tr>\n              <tr>\n                <td style=\"padding:8px 0;color:#64748b;font-size:12px;text-transform:uppercase;\">Urgency</td>\n                <td style=\"padding:8px 0;font-size:14px;\">\n                  <span style=\"display:inline-block;padding:2px 8px;border-radius:999px;background:#f1f5f9;border:1px solid #e2e8f0;font-weight:600;\">\n                    {{ urgency }}\n                  </span>\n                </td>\n              </tr>\n              <tr>\n                <td style=\"padding:8px 0;color:#64748b;font-size:12px;text-transform:uppercase;\">Started</td>\n                <td style=\"padding:8px 0;font-size:14px;\">{{ $json.body.call.start_timestamp }}</td>\n              </tr>\n              <tr>\n                <td style=\"padding:8px 0;color:#64748b;font-size:12px;text-transform:uppercase;\">Customer phone</td>\n                <td style=\"padding:8px 0;font-size:14px;\">{{ $json.body.call.from_number }}</td>\n              </tr>\n            </table>\n          </td>\n        </tr>\n\n        <!-- Summary -->\n        <tr>\n          <td style=\"padding:0 24px 12px;\">\n            <div style=\"font-size:12px;color:#64748b;text-transform:uppercase;margin-bottom:6px;\">Summary</div>\n            <div style=\"font-size:14px;line-height:1.55;color:#0f172a;\">\n              {{ description }}\n            </div>\n          </td>\n        </tr>\n\n        <!-- Transcript (short) -->\n        <tr>\n          <td style=\"padding:0 24px 20px;\">\n            <div style=\"font-size:12px;color:#64748b;text-transform:uppercase;margin-bottom:6px;\">Transcript (short)</div>\n            <blockquote style=\"margin:0;padding:12px 14px;border-left:4px solid #0ea5e9;background:#f8fafc;border-radius:6px;\">\n              <div style=\"font-size:13px;line-height:1.55;color:#334155;white-space:pre-wrap;\">\n                {{ transcript_snippet }}\n              </div>\n            </blockquote>\n          </td>\n        </tr>\n\n        <!-- Footer meta (optional) -->\n        <tr>\n          <td style=\"padding:12px 24px 20px;border-top:1px solid #e6e8eb;color:#64748b;font-size:12px;\">\n            <div>Source: <strong>voice_agent</strong></div>\n            <div>Reference ID: <span style=\"color:#0f172a;\">{{ raw_reference_id }}</span></div>\n          </td>\n        </tr>\n      </table>\n    </td>\n  </tr>\n</table>\n\n```\n\n\nIntent rules (simple heuristics)\n\nWords like “bill, invoice, payment, refund” → billing\n\n“Laptop, restart, error, bug, not working, network” → technical\n\n“Pricing, plan, demo, purchase” → sales\n\n“Login, password, account access, profile, subscription change” → account\n\nElse → other\n\nIf multiple intents appear, pick the strongest by frequency and direct impact.\n\nIMPORTANT : Call the Supabase tool and map the appropriate response as defined below \n\nField rules:\n\n1. **intent**\n   - Short, clear description of the user's issue.\n   - Examples:\n     - \"Laptop not starting\"\n     - \"Unable to login\"\n     - \"Refund not received\"\n     - \"Request for product demo\"\n     - \"Payment failed\"\n   - Avoid snake_case or unnecessary symbols.\n\n2. **confidence**\n   - A numeric value between 0.00 and 1.00.\n   - 0.90–1.00 → Very confident.\n   - 0.70–0.89 → Mostly confident.\n   - 0.40–0.69 → Moderate uncertainty.\n   - Below 0.40 → Unclear or vague call.\n\n3. **recommended_team**\n   - Choose exactly one:\n     - Billing\n     - Technical\n     - Sales\n     - Other\n   - Example logic:\n     - Billing → refund, payment, invoice, charge, subscription\n     - Technical → device not working, login error, software bug\n     - Sales → demo request, pricing, product inquiry\n     - Other → general query or unclassified issue\n\n4. **urgency**\n   - Choose one: Low, Normal, High, or Critical.\n   - Guidelines:\n     - Critical → severe outage, urgent issue, strong frustration, or deadline today.\n     - High → user blocked from key task, repeated issues.\n     - Normal → typical issue needing timely resolution.\n     - Low → general questions or minor requests.\n\nGeneral behavior:\n\n- Focus ONLY on the content of the transcription.\n- Ignore small talk when deciding intent and urgency.\n- If the caller clearly says the device is not starting, restarting, or unusable, treat it at least as \"normal\" and often \"high\" depending on how blocked they are.\n- If the transcription is empty or meaningless, set:\n  - \"intent\": \"unclear\"\n  - \"confidence\": 0.1\n  - \"recommended_team\": \"customer_success\"\n  - \"urgency\": \"low\"\n\nIMPORTANT : When the Slack Tool is called do as defined below \n\n### Slack formatting (mrkdwn)\n- *Italics* → for status lines.\n- Use plain field labels followed by their values (no bold markers).\n- `>` → for quoted transcript lines.\n- Use line breaks between sections for readability.\n- Do not include emojis, hashtags, decorative symbols, or \"Automated with this n8n workflow.\"\n- Keep the tone factual, neutral, and professional.\n\n---\n\n### Output format:\n\nVoicemail Router Alert  \n_Status:_ *<short status, e.g., “No customer response – call abandoned”>*  \n\nCustomer Phone: <customer_phone>  \n> Team Assigned: <recommended_team>  \n> Urgency: <urgency_level>  \nReference: <call_id>  \n\nSummary: <one or two sentences summarizing the issue or context>  \n\n> <first 1–3 lines of the transcript if available>  \n\nAction Required: This alert has been forwarded to the <recommended_team> team for review and follow-up.  \n\nRouted to: <primary_email> (CC: <secondary_email>)  \n\n---\n\n### Example output:\n\nVoicemail Router Alert  \n_Status:_ *No customer response – call abandoned*  \n\nCustomer Phone: +91 1234567890  \n> Team Assigned: General Support  \n> Urgency: Low  \nReference: call_unknown  \n\nSummary: Customer called support but did not respond to the agent's greetings. The call appears to have been abandoned with no customer interaction.  \n\n> Agent: Hello, this is customer support. How can I help you today?  \n> Agent: Hi, are you still there? Just checking in to see how I can assist you.  \n\nAction Required: This alert has been forwarded to the General Support team for review and follow-up.  \n\nRouted to: your@gmail.com (CC: your@gmail.com)  \n\n---\n\n### Behavior rules:\n- If the transcript is empty, omit that section.\n- Skip any missing fields gracefully.\n- Always use exactly one of the following for \"Team Assigned\": Billing, Technical, Sales, or Other.\n- \"Routed to\" must include the real recipient email(s) based on the routing path used.\n- Do not output JSON, code fences, or explanations — only the formatted message text ready for Slack.\n\n\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        128,
+        -208
+      ],
+      "id": "7be04dd8-d315-48a4-b0cf-1df005cb166e",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "endpointUrl": "https://n8n.srv1034374.hstgr.cloud/mcp/12cd94fc-f042-49d1-8f53-a2b35f440e49",
+        "serverTransport": "httpStreamable",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1.1,
+      "position": [
+        160,
+        96
+      ],
+      "id": "6654512e-085e-4616-8687-3d38eff5937d",
+      "name": "MCP Client"
+    },
+    {
+      "parameters": {
+        "tableId": "call_details",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "call_id",
+              "fieldValue": "={{ $json.body.call.call_id }}"
+            },
+            {
+              "fieldId": "caller_phone",
+              "fieldValue": "={{ $json.body.call.from_number }}"
+            },
+            {
+              "fieldId": "timestamp",
+              "fieldValue": "={{ $json.body.call.start_timestamp }}"
+            },
+            {
+              "fieldId": "intent",
+              "fieldValue": "={{ $fromAI('fieldValues3_Field_Value', ``, 'string') }}"
+            },
+            {
+              "fieldId": "confidence",
+              "fieldValue": "={{ $fromAI('fieldValues4_Field_Value', ``, 'string') }}"
+            },
+            {
+              "fieldId": "summary",
+              "fieldValue": "={{ $json.body.call.call_analysis.call_summary }}"
+            },
+            {
+              "fieldId": "recommended_team",
+              "fieldValue": "={{ $fromAI('fieldValues6_Field_Value', ``, 'string') }}"
+            },
+            {
+              "fieldId": "duration_seconds",
+              "fieldValue": "={{ $json.body.call.duration_ms }}"
+            },
+            {
+              "fieldId": "urgency",
+              "fieldValue": "={{ $fromAI('fieldValues8_Field_Value', ``, 'string') }}"
+            },
+            {
+              "fieldId": "recording_url",
+              "fieldValue": "={{ $json.body.call.recording_url }}"
+            },
+            {
+              "fieldId": "transcript",
+              "fieldValue": "={{ $json.body.call.transcript }}"
+            },
+            {
+              "fieldId": "key_details",
+              "fieldValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('fieldValues11_Field_Value', ``, 'string') }}"
+            },
+            {
+              "fieldId": "created_at",
+              "fieldValue": "={{ $json.body.call.start_timestamp }}"
+            },
+            {
+              "fieldId": "updated_at",
+              "fieldValue": "={{ $json.body.call.end_timestamp }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabaseTool",
+      "typeVersion": 1,
+      "position": [
+        304,
+        96
+      ],
+      "id": "c0f7124c-4e4f-4e72-9c73-349a1db7b079",
+      "name": "Create a row in Supabase1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "2VxaYa3zpEr3Ykeh",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "claude-sonnet-4-20250514",
+          "cachedResultName": "Claude 4 Sonnet"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        112
+      ],
+      "id": "d1bd9205-cd0a-4f08-a59a-868c04f6e2e7",
+      "name": "Anthropic Chat Model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "amlq6ajmDHipMmxC",
+          "name": "Anthropic account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MCP Client": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a row in Supabase1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "9f6c0ce8-9f34-4239-81b4-fffe9af3d9ce",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "47c45f0a64eb51385bfea6c7c216101a546e4a99d1e2b0a0d7863ce541f1a14e"
+  },
+  "id": "HTbPQsZ8zYMSEABG",
+  "tags": []
+}
