@@ -1,6 +1,3 @@
-# VoiceAgent-Intelli-Router
-
-
 # <img src="https://img.icons8.com/color/48/voice-recognition.png" width="32"/> **IntelliCall Router – AI Voice Agent**
 
 ### Built with **Retell AI + n8n + MCP + Slack + Gmail**
